@@ -42,22 +42,18 @@ public class UserController {
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
     public String registerUser(User user, Model model) {
-        String alphabetsregex="(?=.*[a-zA-Z]).*";
-        String digitregex="(?=.*[0-9]).*";
-        String specialCharregex="(?=.*[@#$%^&*<+-=~]).*";
-
-        if(user.getPassword().matches(alphabetsregex) && user.getPassword().matches(digitregex) &&
-                user.getPassword().matches(specialCharregex))
+        boolean result = userService.validateUser(user.getPassword());
+        if(result)
         {
             userService.registerUser(user);
-
-            return "redirect:/users/login";
+          //  return "redirect:/users/login";
+            return "users/login";
         }
         else {
             String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
             model.addAttribute("passwordTypeError", error);
             model.addAttribute("User", user);
-            return "redirect:/users/registration";
+            return "users/registration";
         }
     }
 
@@ -90,7 +86,6 @@ public class UserController {
     @RequestMapping(value = "users/logout", method = RequestMethod.POST)
     public String logout(Model model, HttpSession session) {
         session.invalidate();
-
         List<Image> images = imageService.getAllImages();
         model.addAttribute("images", images);
         return "index";
