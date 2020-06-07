@@ -51,8 +51,9 @@ public class ImageController {
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
     @RequestMapping("/images/{imageId}/{title}")
-    public String showImage(@PathVariable("imageId") Integer imageId,@PathVariable("title") String title, Model model) {
-        Image image = imageService.getImageById(imageId,title);
+    public String showImage(@PathVariable("imageId") Integer imageId, @PathVariable("title") String title, Model model) {
+        Image image;
+        image = imageService.getImageById(imageId);
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
         model.addAttribute("comments", image.getComments());
@@ -78,7 +79,7 @@ public class ImageController {
     //set the tags attribute of the image as a list of all the tags returned by the findOrCreateTags() method
     @RequestMapping(value = "/images/upload", method = RequestMethod.POST)
     public String createImage(@RequestParam("file") MultipartFile file, @RequestParam("tags") String tags, Image newImage, HttpSession session) throws IOException {
-        Image image = imageService.getImageById(newImage.getId(), newImage.getTitle());
+        Image image = imageService.getImageById(newImage.getId());
         if(image !=null)
         {
             return "redirect:/images/"  + newImage.getId() + "/" + newImage.getTitle();
@@ -106,7 +107,6 @@ public class ImageController {
     @RequestMapping(value = "/editImage")
     public String editImage(@RequestParam("imageId") Integer imageId, Model model) {
         Image image = imageService.getImage(imageId);
-
         String tags = convertTagsToString(image.getTags());
         model.addAttribute("image", image);
         model.addAttribute("tags", tags);
@@ -127,8 +127,8 @@ public class ImageController {
     @RequestMapping(value = "/editImage", method = RequestMethod.PUT)
     public String editImageSubmit(@RequestParam("file") MultipartFile file, @RequestParam("imageId") Integer imageId,
                                   @RequestParam("tags") String tags, Image updatedImage, Model model,
-                                  HttpSession session) throws IOException {
-
+                                  HttpSession session) throws IOException
+    {
         Image image = imageService.getImage(imageId);
         User user = (User) session.getAttribute("loggeduser");
         if(image.getUser().getId() != user.getId())
@@ -150,7 +150,6 @@ public class ImageController {
             }
 
             updatedImage.setId(imageId);
-
             updatedImage.setUser(user);
             updatedImage.setTags(imageTags);
             updatedImage.setDate(new Date());
@@ -165,7 +164,8 @@ public class ImageController {
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
-    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, Model model, HttpSession session) {
+    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, Model model, HttpSession session)
+    {
         Image image = imageService.getImage(imageId);
         User user = (User) session.getAttribute("loggeduser");
         if(image.getUser().getId() != user.getId())
@@ -214,7 +214,6 @@ public class ImageController {
     //Returns the string
     private String convertTagsToString(List<Tag> tags) {
         StringBuilder tagString = new StringBuilder();
-
         for (int i = 0; i <= tags.size() - 2; i++) {
             tagString.append(tags.get(i).getName()).append(",");
         }

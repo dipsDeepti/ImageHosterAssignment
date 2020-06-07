@@ -31,7 +31,7 @@ public class CommentController {
         Comments newComment = new Comments();
         User user = (User) session.getAttribute("loggeduser");
         newComment.setUser(user);
-        Image image = imageService.getImageById(id, title);
+        Image image = imageService.getImageById(id);
         newComment.setImage(image);
         newComment.setText(comment);
         newComment.setDate(LocalDate.now());

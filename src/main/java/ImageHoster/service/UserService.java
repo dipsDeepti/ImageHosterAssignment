@@ -32,4 +32,17 @@ public class UserService {
         }
     }
 
+    public boolean validateUser(String password)
+    {
+        boolean result = false;
+        String alphabetsregex="(?=.*[a-zA-Z]).*";
+        String digitregex="(?=.*[0-9]).*";
+        String specialCharregex="(?=.*[@#$%^&*<+-=~]).*";
+        if(password.matches(alphabetsregex) && password.matches(digitregex) && password.matches(specialCharregex))
+        {
+            return  true;
+        }
+        return result;
+    }
+
 }
